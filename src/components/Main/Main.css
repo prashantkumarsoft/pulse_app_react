@@ -1,0 +1,79 @@
+/* HorizontalLayout.css */
+
+
+
+.horizontal-layout {
+    display: flex;
+    height: max-content;
+    margin: 0px 7px;
+     /* Set the height to fill the entire viewport */
+  }
+  
+  .section {
+    flex: 1;
+    background-color: #f0f0f0; /* Set a background color for better visualization */
+    margin: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    height: fit-content;
+
+    /* text-align: ; */
+  }
+  
+  .add-opportunity-btn {
+    margin-left: 80px;
+    background-color: #0d99ff;
+    color: #fff;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+
+  }
+
+
+/* Style for the popup container */
+.popup-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+/* Style for the popup header */
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 0px;
+}
+
+/* Style for the close button */
+.close-popup-btn {
+  cursor: pointer;
+  padding: 5px;
+  background-color: transparent;
+  border: none;
+}
+
+/* Additional styling for the content */
+.popup-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Add some gap between the fields */
+}
+
+/* Additional styling for the form fields */
+.popup-content input,
+.popup-content select {
+  width: 100%;
+}
+
+.save_member{
+  background-color: #0d99ff;
+
+}
