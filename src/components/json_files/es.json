@@ -16,11 +16,13 @@
     "male": " Masculina",
     "female": " Femenina",
     "doctor": " Doctora",
-    "patient": " paciente"
+    "patient": " paciente",
 
-    
+    "pro_name": " Nombre_procedimiento",
+    "pat_Id": " ID del paciente",  
+    "no_pat": "  No hay pacientes disponibles",
+    "doc_Id": " ID_médico",
+    "no_doc": " No hay doctor disponible"
+
 
   }
-
-  
-  

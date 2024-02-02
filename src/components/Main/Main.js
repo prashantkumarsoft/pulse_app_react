@@ -3,8 +3,6 @@ import axios from "axios";
 import enTranslations from "../json_files/en.json";
 import esTranslations from "../json_files/es.json";
 import { useLanguage } from "../../context/LanguageContext";
-// import {useApi} from '../../context/ApiContext'
-
 
 import "./Main.css";
 import {
@@ -39,38 +37,18 @@ const Main = () => {
   const [patientData, setPatientData] = useState({});
   const [doctorData, setDoctorData] = useState({});
 
-
-   const loadNextApi = () => {
+  const loadNextApi = () => {
     axios
       .get(`${baseUrl}/opportunities`)
       .then((response) => {
         setOpportunitiesData(response.data);
       })
       .catch((error) => console.log(error, "opportunities error"));
-    };
+  };
 
   useEffect(() => {
-    loadNextApi()
+    loadNextApi();
   }, []);
-
-  console.log("update Data====>", opportunitiesData)
-
-  // const handleSearch = () => {
-  //   axios
-      // .post(`${baseUrl}/opportunities/search`, { searchText })
-  //     .then((response) => {
-  //       console.log("success", response.data.data);
-  //       setOpportunitiesData(response.data.data)
-        
-  //     })
-  //     .catch((error) => {
-  //       console.error("error", error);
-  //     });
-  // };
-
-  // useEffect(() => {
-  //   handleSearch();
-  // }, [searchText]);
 
   useEffect(() => {
     axios
@@ -93,7 +71,9 @@ const Main = () => {
   const handleGetCardData = (cardType) => {
     let data = [];
     if (opportunitiesData.data && opportunitiesData.data.length > 0) {
-      data = opportunitiesData.data.filter((stage) => stage.current_stage === cardType);
+      data = opportunitiesData.data.filter(
+        (stage) => stage.current_stage === cardType
+      );
     }
 
     return data;
@@ -101,8 +81,8 @@ const Main = () => {
 
   const [formData, setFormData] = useState({
     procedure_name: "",
-    patient_id: "", // default value, you can change as needed
-    doctor_id: "", // default value, you can change as needed
+    patient_id: "",
+    doctor_id: "",
     stage_history: [
       {
         timestamp: new Date().toISOString(),
@@ -144,12 +124,12 @@ const Main = () => {
     }));
   };
 
-  const handleSave = async () => { await
-    axios
+  const handleSave = async () => {
+    await axios
       .post(`${baseUrl}/opportunities`, formData)
       .then((response) => {
         console.log("success", response);
-
+        loadNextApi();
       })
       .catch((error) => {
         console.error("error", error);
@@ -182,7 +162,10 @@ const Main = () => {
 
   return (
     <>
-    <Header  setOpportunitiesData={setOpportunitiesData}/>
+      <Header
+        setOpportunitiesData={setOpportunitiesData}
+        loadNextApi={loadNextApi}
+      />
       <div className="horizontal-layout">
         {/* Content for the first section */}
         <div className="section">
@@ -200,7 +183,15 @@ const Main = () => {
               {translations["header.addOpportunity"]}
             </button>
           </Box>
-          <RecipeReviewCard data={handleGetCardData("lead")} />
+          <RecipeReviewCard
+            handleChange={handleChange}
+            formData={formData}
+            doctorData={doctorData}
+            opportunitiesData={opportunitiesData}
+            setOpportunitiesData={setOpportunitiesData}
+            loadNextApi={loadNextApi}
+            data={handleGetCardData("lead")}
+          />
         </div>
 
         {/* Content for the second section */}
@@ -211,7 +202,15 @@ const Main = () => {
             {opportunitiesData.qualified_stage_count})
           </Typography>
 
-          <RecipeReviewCard data={handleGetCardData("qualified")} />
+          <RecipeReviewCard
+            handleChange={handleChange}
+            formData={formData}
+            doctorData={doctorData}
+            opportunitiesData={opportunitiesData}
+            setOpportunitiesData={setOpportunitiesData}
+            loadNextApi={loadNextApi}
+            data={handleGetCardData("qualified")}
+          />
         </div>
 
         {/* Content for the third section */}
@@ -220,7 +219,15 @@ const Main = () => {
             {translations["stage3.title"]}(
             {opportunitiesData.booked_stage_count})
           </Typography>
-          <RecipeReviewCard data={handleGetCardData("booked")} />
+          <RecipeReviewCard
+            handleChange={handleChange}
+            formData={formData}
+            doctorData={doctorData}
+            opportunitiesData={opportunitiesData}
+            setOpportunitiesData={setOpportunitiesData}
+            loadNextApi={loadNextApi}
+            data={handleGetCardData("booked")}
+          />
         </div>
 
         {/* Content for the fourth section */}
@@ -229,7 +236,15 @@ const Main = () => {
             {translations["stage4.title"]}(
             {opportunitiesData.treated_stage_count})
           </Typography>
-          <RecipeReviewCard data={handleGetCardData("treated")} />
+          <RecipeReviewCard
+            handleChange={handleChange}
+            formData={formData}
+            doctorData={doctorData}
+            opportunitiesData={opportunitiesData}
+            setOpportunitiesData={setOpportunitiesData}
+            loadNextApi={loadNextApi}
+            data={handleGetCardData("treated")}
+          />
         </div>
       </div>
 
@@ -237,7 +252,9 @@ const Main = () => {
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
         <DialogTitle>
           <div className="popup-header">
-            <Typography variant="h6">Add Opportunity</Typography>
+            <Typography variant="h6">
+              {translations["header.addOpportunity"]}
+            </Typography>
             <IconButton
               aria-label="close"
               className="close-popup-btn"
@@ -254,14 +271,14 @@ const Main = () => {
           <br />
           <TextField
             fullWidth
-            label="Procedure_Name"
+            label={translations["pro_name"]}
             value={formData.procedure_name}
             onChange={(e) => handleChange("procedure_name", e.target.value)}
             error={Boolean(validationErrors.procedure_name)}
             helperText={validationErrors.procedure_name}
           />
           {/* <FormControl variant="outlined" > */}
-          <InputLabel>Patient_ID</InputLabel>
+          <InputLabel>{translations["pat_Id"]}</InputLabel>
           <Select
             value={formData.patient_id}
             onChange={(e) => handleChange("patient_id", e.target.value)}
@@ -274,7 +291,7 @@ const Main = () => {
                 </MenuItem>
               ))
             ) : (
-              <MenuItem disabled>No patients available</MenuItem>
+              <MenuItem disabled>{translations["no_pat"]}</MenuItem>
             )}
           </Select>
           {validationErrors.patient_id && (
@@ -283,7 +300,7 @@ const Main = () => {
             </div>
           )}
 
-          <InputLabel>Doctor_ID</InputLabel>
+          <InputLabel>{translations["doc_Id"]}</InputLabel>
           <Select
             value={formData.doctor_id}
             onChange={(e) => handleChange("doctor_id", e.target.value)}
@@ -296,7 +313,7 @@ const Main = () => {
                 </MenuItem>
               ))
             ) : (
-              <MenuItem disabled>No patients available</MenuItem>
+              <MenuItem disabled>{translations["no_doc"]}</MenuItem>
             )}
           </Select>
           {validationErrors.doctor_id && (
@@ -304,16 +321,14 @@ const Main = () => {
               {validationErrors.doctor_id}
             </div>
           )}
-          {/* </FormControl> */}
         </DialogContent>
         <DialogActions>
-          {/* Additional actions if needed */}
           <Button
             onClick={handleSave}
             variant="contained"
             className="save_member"
-          > 
-            Save
+          >
+            {translations["memSave"]}
           </Button>
         </DialogActions>
       </Dialog>

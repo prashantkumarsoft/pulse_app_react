@@ -6,18 +6,17 @@
     display: flex;
     height: max-content;
     margin: 0px 7px;
-     /* Set the height to fill the entire viewport */
+    
   }
   
   .section {
     flex: 1;
-    background-color: #f0f0f0; /* Set a background color for better visualization */
+    background-color: #f0f0f0;
     margin: 10px;
     padding: 10px;
     border-radius: 8px;
     height: fit-content;
 
-    /* text-align: ; */
   }
   
   .add-opportunity-btn {
@@ -64,7 +63,7 @@
 .popup-content {
   display: flex;
   flex-direction: column;
-  gap: 10px; /* Add some gap between the fields */
+  gap: 10px; 
 }
 
 /* Additional styling for the form fields */

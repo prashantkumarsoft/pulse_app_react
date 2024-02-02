@@ -6,7 +6,6 @@ import { baseUrl } from "../../config";
 import enTranslations from "../json_files/en.json";
 import esTranslations from "../json_files/es.json";
 import { useLanguage } from "../../context/LanguageContext";
-import { useApi } from "../../context/ApiContext";
 
 import {
   Button,
@@ -28,9 +27,8 @@ import { lightBlue } from "@mui/material/colors";
 import PersonAddRoundedIcon from "@mui/icons-material/PersonAddRounded";
 import SearchIcon from "@mui/icons-material/Search";
 import RecipeReviewCard from "../card/Card";
-const Header = ({setOpportunitiesData}) => {
+const Header = ({ setOpportunitiesData, loadNextApi }) => {
   const { language } = useLanguage();
-  // const { loadNextApi } = useApi();
   const translations = language === "es" ? esTranslations : enTranslations;
 
   const [isModalOpen, setModalOpen] = useState(false);
@@ -44,32 +42,15 @@ const Header = ({setOpportunitiesData}) => {
     Image: null,
   });
   const [validationErrors, setValidationErrors] = useState({});
-  // const [searchQuery, setSearchQuery] = useState("");
-  // const [filteredData, setFilteredData] = useState([]);
 
-  // useEffect(() => {
-  //   const handleSearch = () => {
-  //     axios
-  //       .post(`${baseUrl}/opportunities/search`, { searchQuery })
-  //       .then((response) => {
-  //         console.log("success", response.data.data);
-
-  //       })
-  //       .catch((error) => {
-  //         console.error("error", error);
-  //       });
-  //   };
-  //   handleSearch();
-  // }, [searchQuery]);
   const [searchText, setSearchText] = useState("");
 
   const handleSearch = () => {
     axios
-      .post(`${baseUrl}/opportunities/search`, { "query": searchText })
+      .post(`${baseUrl}/opportunities/search`, { query: searchText })
       .then((response) => {
         console.log("success", response.data.data);
-        setOpportunitiesData(response.data)
-        
+        setOpportunitiesData(response.data);
       })
       .catch((error) => {
         console.error("error", error);
@@ -79,10 +60,6 @@ const Header = ({setOpportunitiesData}) => {
   useEffect(() => {
     handleSearch();
   }, [searchText]);
-
-  const Search = (value)=>{
-    setSearchText(value)
-  }
 
   const openModal = () => {
     setModalOpen(true);
@@ -161,7 +138,7 @@ const Header = ({setOpportunitiesData}) => {
       })
       .then((response) => {
         console.log("success", response);
-        // loadNextApi();
+        loadNextApi();
       })
       .catch((error) => {
         console.error("error", error);
@@ -235,7 +212,8 @@ const Header = ({setOpportunitiesData}) => {
                     padding: "8px 30px",
                     borderRadius: "30px",
                     border: "1px solid #ccc",
-                  }}onChange={(e) => Search(e.target.value)}
+                  }}
+                  onChange={(e) => setSearchText(e.target.value)}
                 />
               </div>
             </Box>
@@ -412,10 +390,7 @@ const Header = ({setOpportunitiesData}) => {
           </Box>
         </Container>
       </Modal>
-      <div className="cards-container">
-      </div>
-
-     
+      <div className="cards-container"></div>
     </>
   );
 };

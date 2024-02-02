@@ -16,7 +16,13 @@
     "male": " Male",
     "female": " Female",
     "doctor": " Doctor",
-    "patient": " Patient"
+    "patient": " Patient",
+    "pro_name": " Procedure_Name",
+    "pat_Id": "Patient_ID ",  
+    "no_pat": "  No Patients Available",
+    "doc_Id": " Doctor_ID",
+    "no_doc": " No Doctor Available"
+
 
 
 
