@@ -25,6 +25,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import RecipeReviewCard from "../card/Card";
 import { baseUrl } from "../../config";
+import Header from "../Header/Header";
 
 const Main = () => {
   const { language } = useLanguage();
@@ -38,6 +39,7 @@ const Main = () => {
   const [patientData, setPatientData] = useState({});
   const [doctorData, setDoctorData] = useState({});
 
+
    const loadNextApi = () => {
     axios
       .get(`${baseUrl}/opportunities`)
@@ -49,7 +51,26 @@ const Main = () => {
 
   useEffect(() => {
     loadNextApi()
-  }, [opportunitiesData]);
+  }, []);
+
+  console.log("update Data====>", opportunitiesData)
+
+  // const handleSearch = () => {
+  //   axios
+      // .post(`${baseUrl}/opportunities/search`, { searchText })
+  //     .then((response) => {
+  //       console.log("success", response.data.data);
+  //       setOpportunitiesData(response.data.data)
+        
+  //     })
+  //     .catch((error) => {
+  //       console.error("error", error);
+  //     });
+  // };
+
+  // useEffect(() => {
+  //   handleSearch();
+  // }, [searchText]);
 
   useEffect(() => {
     axios
@@ -161,6 +182,7 @@ const Main = () => {
 
   return (
     <>
+    <Header  setOpportunitiesData={setOpportunitiesData}/>
       <div className="horizontal-layout">
         {/* Content for the first section */}
         <div className="section">
@@ -171,7 +193,6 @@ const Main = () => {
             alignItems={"center"}
           >
             <Typography>
-              {" "}
               {translations["stage1.title"]}(
               {opportunitiesData.lead_stage_count})
             </Typography>
@@ -291,7 +312,7 @@ const Main = () => {
             onClick={handleSave}
             variant="contained"
             className="save_member"
-          >
+          > 
             Save
           </Button>
         </DialogActions>

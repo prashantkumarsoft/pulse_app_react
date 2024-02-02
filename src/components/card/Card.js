@@ -25,8 +25,8 @@ import moment from "moment";
 import { baseUrl } from "../../config";
 import axios from "axios";
 
-export default function RecipeReviewCard({data, search, searchQuery}) {
-
+export default function RecipeReviewCard({data}) {
+   console.log("newData====>0",data)
   const { language } = useLanguage();
   const translations = language === 'es' ? esTranslations : enTranslations;
 

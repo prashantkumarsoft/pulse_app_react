@@ -28,9 +28,9 @@ import { lightBlue } from "@mui/material/colors";
 import PersonAddRoundedIcon from "@mui/icons-material/PersonAddRounded";
 import SearchIcon from "@mui/icons-material/Search";
 import RecipeReviewCard from "../card/Card";
-const Header = () => {
+const Header = ({setOpportunitiesData}) => {
   const { language } = useLanguage();
-  const { loadNextApi } = useApi();
+  // const { loadNextApi } = useApi();
   const translations = language === "es" ? esTranslations : enTranslations;
 
   const [isModalOpen, setModalOpen] = useState(false);
@@ -44,23 +44,45 @@ const Header = () => {
     Image: null,
   });
   const [validationErrors, setValidationErrors] = useState({});
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filteredData, setFilteredData] = useState([]);
+  // const [searchQuery, setSearchQuery] = useState("");
+  // const [filteredData, setFilteredData] = useState([]);
+
+  // useEffect(() => {
+  //   const handleSearch = () => {
+  //     axios
+  //       .post(`${baseUrl}/opportunities/search`, { searchQuery })
+  //       .then((response) => {
+  //         console.log("success", response.data.data);
+
+  //       })
+  //       .catch((error) => {
+  //         console.error("error", error);
+  //       });
+  //   };
+  //   handleSearch();
+  // }, [searchQuery]);
+  const [searchText, setSearchText] = useState("");
+
+  const handleSearch = () => {
+    axios
+      .post(`${baseUrl}/opportunities/search`, { "query": searchText })
+      .then((response) => {
+        console.log("success", response.data.data);
+        setOpportunitiesData(response.data)
+        
+      })
+      .catch((error) => {
+        console.error("error", error);
+      });
+  };
 
   useEffect(() => {
-    const handleSearch = () => {
-      axios
-        .post(`${baseUrl}/opportunities/search`, { searchQuery })
-        .then((response) => {
-          console.log("success", response.data.data);
-          loadNextApi();
-        })
-        .catch((error) => {
-          console.error("error", error);
-        });
-    };
     handleSearch();
-  }, [searchQuery]);
+  }, [searchText]);
+
+  const Search = (value)=>{
+    setSearchText(value)
+  }
 
   const openModal = () => {
     setModalOpen(true);
@@ -139,7 +161,7 @@ const Header = () => {
       })
       .then((response) => {
         console.log("success", response);
-        loadNextApi();
+        // loadNextApi();
       })
       .catch((error) => {
         console.error("error", error);
@@ -207,14 +229,13 @@ const Header = () => {
                 <input
                   type="text"
                   placeholder={translations["search.placeholder"]}
-                  value={searchQuery}
+                  value={searchText}
                   style={{
                     width: "100%",
                     padding: "8px 30px",
                     borderRadius: "30px",
                     border: "1px solid #ccc",
-                  }}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  }}onChange={(e) => Search(e.target.value)}
                 />
               </div>
             </Box>
@@ -275,9 +296,7 @@ const Header = () => {
                     />
                   </Box>
                   <Box sx={{ mr: 40, mt: 1 }}>
-                    <Typography>
-                      {translations["image.SuccMessage"]}
-                    </Typography>
+                    <Typography>{translations["image.SuccMessage"]}</Typography>
                   </Box>
                 </Box>
               </>
@@ -310,9 +329,7 @@ const Header = () => {
           {/* Form groups for First Name, Last Name, Role, Gender, and Date of Birth */}
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             <TextField
-            label=          {translations["image.SuccMessage"]}
-            
-                      
+              label={translations["image.SuccMessage"]}
               variant="outlined"
               onChange={(e) => handleFieldChange("firstName", e.target.value)}
               error={Boolean(validationErrors.firstName)}
@@ -345,7 +362,9 @@ const Header = () => {
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <FormControl variant="outlined" fullWidth>
-                  <InputLabel id="gender-label">{translations["memGender"]}</InputLabel>
+                  <InputLabel id="gender-label">
+                    {translations["memGender"]}
+                  </InputLabel>
                   <Select
                     label="Gender"
                     labelId="gender-label"
@@ -393,20 +412,10 @@ const Header = () => {
           </Box>
         </Container>
       </Modal>
-
       <div className="cards-container">
-        {filteredData.length > 0 &&
-          filteredData.map((item) => (
-            <>
-              {console.log(item)}
-              <RecipeReviewCard
-                key={item.id}
-                searchQuery={searchQuery}
-                search={item}
-              />
-            </>
-          ))}
       </div>
+
+     
     </>
   );
 };
