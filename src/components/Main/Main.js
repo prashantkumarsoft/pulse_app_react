@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import enTranslations from "../json_files/en.json";
+import esTranslations from "../json_files/es.json";
+import { useLanguage } from "../../context/LanguageContext";
+// import {useApi} from '../../context/ApiContext'
+
 
 import "./Main.css";
 import {
@@ -22,6 +27,10 @@ import RecipeReviewCard from "../card/Card";
 import { baseUrl } from "../../config";
 
 const Main = () => {
+  const { language } = useLanguage();
+
+  const translations = language === "es" ? esTranslations : enTranslations;
+
   const [open, setOpen] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
 
@@ -29,22 +38,24 @@ const Main = () => {
   const [patientData, setPatientData] = useState({});
   const [doctorData, setDoctorData] = useState({});
 
-
-  useEffect(() => {
+   const loadNextApi = () => {
     axios
       .get(`${baseUrl}/opportunities`)
       .then((response) => {
         setOpportunitiesData(response.data);
       })
       .catch((error) => console.log(error, "opportunities error"));
-  }, []);
+    };
+
+  useEffect(() => {
+    loadNextApi()
+  }, [opportunitiesData]);
 
   useEffect(() => {
     axios
       .get(`${baseUrl}/members/doctors`)
       .then((response) => {
         setDoctorData(response.data);
-        console.log(response.data);
       })
       .catch((error) => console.log(error, "doctor ID error"));
   }, []);
@@ -54,26 +65,14 @@ const Main = () => {
       .get(`${baseUrl}/members/patients`)
       .then((response) => {
         setPatientData(response.data);
-        console.log(response.data);
       })
       .catch((error) => console.log(error, "Patient ID error"));
   }, []);
 
-
-
   const handleGetCardData = (cardType) => {
     let data = [];
     if (opportunitiesData.data && opportunitiesData.data.length > 0) {
-      data = opportunitiesData.data.filter((stage) => {
-        if (Array.isArray(stage.stage_history)) {
-          let isTrue = stage.stage_history.some(
-            (item) => item.stage_name.toLowerCase() == cardType
-          );
-          return isTrue;
-        } else {
-          return false;
-        }
-      });
+      data = opportunitiesData.data.filter((stage) => stage.current_stage === cardType);
     }
 
     return data;
@@ -124,15 +123,16 @@ const Main = () => {
     }));
   };
 
-  const handleSave = () => {
+  const handleSave = async () => { await
     axios
-    .post(`${baseUrl}/opportunities`, formData)
-    .then((response) => {
-      console.log("success", response);
-    })
-    .catch((error) => {
-      console.error("error", error);
-    });
+      .post(`${baseUrl}/opportunities`, formData)
+      .then((response) => {
+        console.log("success", response);
+
+      })
+      .catch((error) => {
+        console.error("error", error);
+      });
 
     console.log("Form Data:", formData);
 
@@ -156,10 +156,8 @@ const Main = () => {
       return;
     }
 
-    alert("Opportunity Form submitted successfully");
     handleClose();
   };
-
 
   return (
     <>
@@ -172,9 +170,13 @@ const Main = () => {
             justifyContent={"space-between"}
             alignItems={"center"}
           >
-            <Typography>Leads({opportunitiesData.lead_stage_count})</Typography>
+            <Typography>
+              {" "}
+              {translations["stage1.title"]}(
+              {opportunitiesData.lead_stage_count})
+            </Typography>
             <button className="add-opportunity-btn" onClick={handleOpen}>
-              Add Opportunity
+              {translations["header.addOpportunity"]}
             </button>
           </Box>
           <RecipeReviewCard data={handleGetCardData("lead")} />
@@ -183,7 +185,9 @@ const Main = () => {
         {/* Content for the second section */}
         <div className="section">
           <Typography>
-            Qualified({opportunitiesData.qualified_stage_count})
+            {" "}
+            {translations["stage2.title"]}(
+            {opportunitiesData.qualified_stage_count})
           </Typography>
 
           <RecipeReviewCard data={handleGetCardData("qualified")} />
@@ -192,7 +196,8 @@ const Main = () => {
         {/* Content for the third section */}
         <div className="section">
           <Typography>
-            Booked({opportunitiesData.booked_stage_count})
+            {translations["stage3.title"]}(
+            {opportunitiesData.booked_stage_count})
           </Typography>
           <RecipeReviewCard data={handleGetCardData("booked")} />
         </div>
@@ -200,7 +205,8 @@ const Main = () => {
         {/* Content for the fourth section */}
         <div className="section">
           <Typography>
-            Treated({opportunitiesData.treated_stage_count})
+            {translations["stage4.title"]}(
+            {opportunitiesData.treated_stage_count})
           </Typography>
           <RecipeReviewCard data={handleGetCardData("treated")} />
         </div>
@@ -255,7 +261,7 @@ const Main = () => {
               {validationErrors.patient_id}
             </div>
           )}
-          
+
           <InputLabel>Doctor_ID</InputLabel>
           <Select
             value={formData.doctor_id}

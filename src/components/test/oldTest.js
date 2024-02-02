@@ -1,13 +1,9 @@
+
+
 // Header.js
 import "./Header.css";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
-import { baseUrl } from "../../config";
-import enTranslations from "../json_files/en.json";
-import esTranslations from "../json_files/es.json";
-import { useLanguage } from "../../context/LanguageContext";
-import { useApi } from "../../context/ApiContext";
-
 import {
   Button,
   TextField,
@@ -22,17 +18,13 @@ import {
   IconButton,
   Grid,
   Avatar,
+  InputAdornment,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { lightBlue } from "@mui/material/colors";
 import PersonAddRoundedIcon from "@mui/icons-material/PersonAddRounded";
 import SearchIcon from "@mui/icons-material/Search";
-import RecipeReviewCard from "../card/Card";
 const Header = () => {
-  const { language } = useLanguage();
-  const { loadNextApi } = useApi();
-  const translations = language === "es" ? esTranslations : enTranslations;
-
   const [isModalOpen, setModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -43,24 +35,8 @@ const Header = () => {
     dateOfBirth: "",
     Image: null,
   });
+  // const [selectedImage, setSelectedImage] = useState(null);
   const [validationErrors, setValidationErrors] = useState({});
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filteredData, setFilteredData] = useState([]);
-
-  useEffect(() => {
-    const handleSearch = () => {
-      axios
-        .post(`${baseUrl}/opportunities/search`, { searchQuery })
-        .then((response) => {
-          console.log("success", response.data.data);
-          loadNextApi();
-        })
-        .catch((error) => {
-          console.error("error", error);
-        });
-    };
-    handleSearch();
-  }, [searchQuery]);
 
   const openModal = () => {
     setModalOpen(true);
@@ -68,18 +44,17 @@ const Header = () => {
 
   const closeModal = () => {
     setModalOpen(false);
-
     setFormData((prevFormData) => ({
       ...prevFormData,
+      Image: null,
       firstName: "",
       lastName: "",
       role: "",
       gender: "",
       age: 0,
       dateOfBirth: "",
-      Image: null,
+
     }));
-    setValidationErrors({});
   };
 
   const handleImageChange = (event) => {
@@ -97,6 +72,12 @@ const Header = () => {
         Image: null,
       }));
     }
+
+    // // Update the selectedImage
+    // setFormData((prevFormData) => ({
+    //   ...prevFormData,
+    //   selectedImage: file,
+    // }));
   };
 
   const handleFieldChange = (fieldName, value) => {
@@ -123,27 +104,38 @@ const Header = () => {
     }
   };
 
-  const handleSave = async () => {
-    let addMemberData = new FormData();
-    addMemberData.append("[member][first_name]", formData.firstName);
-    addMemberData.append("[member][last_name]", formData.lastName);
-    addMemberData.append("[member][gender]", formData.gender);
-    addMemberData.append("[member][age]", formData.age);
-    addMemberData.append("[member][role]", formData.role);
-    addMemberData.append("[member][avatar]", formData.Image, "file");
-    await axios
-      .post(`${baseUrl}/members`, addMemberData, {
-        headers: {
-          "Content-Type": `multipart/form-data`, // Set the content type to multipart/form-data
-        },
-      })
-      .then((response) => {
-        console.log("success", response);
-        loadNextApi();
-      })
-      .catch((error) => {
-        console.error("error", error);
-      });
+  const handleSave = () => {
+
+    // let addMemberData = new FormData();
+    // addMemberData.append("[member][first_name]", formData.firstName);
+    // addMemberData.append("[member][last_name]", formData.lastName);
+    // addMemberData.append("[member][gender]", formData.gender);
+    // addMemberData.append("[member][age]", formData.age);
+    // addMemberData.append("[member][role]", formData.gender);
+    // addMemberData.append("[member][avatar]", formData.selectedImage, "file");
+
+    // axios
+    //   .post("https://0f82-115-246-60-213.ngrok-free.app/members", addMemberData)
+    //   .then((response) => {
+    //     console.log("success", response);
+    //   })
+    //   .catch((error) => {
+    //     console.error("error", error);
+    //   });
+
+    // console.log("Form Data:", addMemberData);
+    // ********************************************************************
+    // setModalOpen(false);
+
+    // setFormData({
+    //   firstName: '',
+    //   lastName: '',
+    //   role: '',
+    //   gender: '',
+    //   age: 0,
+    // selectedImage: null
+
+    // });
 
     // Validation logic
     const errors = {};
@@ -177,47 +169,51 @@ const Header = () => {
       setValidationErrors(errors);
       return;
     }
+
+    console.log(formData);
+
+    alert("Form submitted successfully");
     closeModal();
+    
   };
 
   return (
     <>
+      {/* <Box>
+        <h2 style={{marginLeft: "20px"}}>Patients</h2>
+      </Box>
+      <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"}>
+        <Button className="add-member-btn" onClick={openModal}> Add Member</Button>
+      </Box> */}
       <nav className="navbar">
         <div className="navbar-container">
-          <h1> {translations["navbar.title"]}</h1>
+          <h1>Patients</h1>
           <div className="navbar-buttons">
             <button className="add-member-btn" onClick={openModal}>
-              {translations["navbar.addMember"]}
+              Add Member
             </button>
-            <Box display={"flex"}>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  width: "220px",
-                }}
-              >
-                <SearchIcon
-                  style={{
-                    color: "gray",
-                    position: "absolute",
-                    marginLeft: "5px",
-                  }}
-                />
-                <input
-                  type="text"
-                  placeholder={translations["search.placeholder"]}
-                  value={searchQuery}
-                  style={{
-                    width: "100%",
-                    padding: "8px 30px",
-                    borderRadius: "30px",
-                    border: "1px solid #ccc",
-                  }}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-            </Box>
+            <div className="search-container">
+              <SearchIcon />
+              <input
+                type="text"
+                placeholder="Search..."
+                className="search-bar"
+              />
+            </div>
+            {/* <TextField
+              variant="outlined"
+              fullWidth
+              placeholder="Search..."
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <IconButton size="small">
+                      <SearchIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            /> */}
           </div>
         </div>
       </nav>
@@ -236,7 +232,7 @@ const Header = () => {
             </IconButton>
           </Box>
           <Typography variant="h5" gutterBottom>
-            {translations["navbar.addMember"]}
+            Add Member
           </Typography>
 
           <hr />
@@ -253,11 +249,7 @@ const Header = () => {
             />
             {formData.Image ? (
               <>
-                <Box
-                  display={"flex"}
-                  flexDirection={"row"}
-                  justifyContent={"space-between"}
-                >
+                <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"}>
                   <Box>
                     <Avatar
                       src={URL.createObjectURL(formData.Image)}
@@ -274,20 +266,14 @@ const Header = () => {
                       }}
                     />
                   </Box>
-                  <Box sx={{ mr: 40, mt: 1 }}>
-                    <Typography>
-                      {translations["image.SuccMessage"]}
-                    </Typography>
+                  <Box sx={{mr: 40, mt: 1}}>
+                    <Typography> Succussfully Uploaded</Typography>
                   </Box>
                 </Box>
               </>
             ) : (
-              <Box
-                display={"flex"}
-                flexDirection={"row"}
-                justifyContent={"space-between"}
-              >
-                <Box>
+              <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"}>
+                <Box >
                   <PersonAddRoundedIcon
                     sx={{
                       fontSize: 40,
@@ -299,9 +285,9 @@ const Header = () => {
                       cursor: "pointer",
                     }}
                   />
-                </Box>
-                <Box sx={{ mr: 42, mt: 1 }}>
-                  <Typography> {translations["image.message"]}</Typography>
+                </Box >
+                <Box sx={{mr: 42, mt: 1}}>
+                  <Typography> Click to Upload Image</Typography>
                 </Box>
               </Box>
             )}
@@ -310,16 +296,14 @@ const Header = () => {
           {/* Form groups for First Name, Last Name, Role, Gender, and Date of Birth */}
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             <TextField
-            label=          {translations["image.SuccMessage"]}
-            
-                      
+              label="First Name"
               variant="outlined"
               onChange={(e) => handleFieldChange("firstName", e.target.value)}
               error={Boolean(validationErrors.firstName)}
               helperText={validationErrors.firstName}
             />
             <TextField
-              label={translations["memLastName"]}
+              label="Last Name"
               variant="outlined"
               onChange={(e) => handleFieldChange("lastName", e.target.value)}
               error={Boolean(validationErrors.lastName)}
@@ -333,8 +317,8 @@ const Header = () => {
                 onChange={(e) => handleFieldChange("role", e.target.value)}
                 error={Boolean(validationErrors.role)}
               >
-                <MenuItem value="doctor">{translations["doctor"]}</MenuItem>
-                <MenuItem value="patient">{translations["patient"]}</MenuItem>
+                <MenuItem value="doctor">Doctor</MenuItem>
+                <MenuItem value="patient">Patient</MenuItem>
               </Select>
               {validationErrors.role && (
                 <div style={{ color: "red", fontSize: "0.75rem" }}>
@@ -345,7 +329,7 @@ const Header = () => {
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <FormControl variant="outlined" fullWidth>
-                  <InputLabel id="gender-label">{translations["memGender"]}</InputLabel>
+                  <InputLabel id="gender-label">Gender</InputLabel>
                   <Select
                     label="Gender"
                     labelId="gender-label"
@@ -354,8 +338,8 @@ const Header = () => {
                     }
                     error={Boolean(validationErrors.gender)}
                   >
-                    <MenuItem value="male">{translations["male"]}</MenuItem>
-                    <MenuItem value="female">{translations["female"]}</MenuItem>
+                    <MenuItem value="male">Male</MenuItem>
+                    <MenuItem value="female">Female</MenuItem>
                   </Select>
                   {validationErrors.gender && (
                     <div style={{ color: "red", fontSize: "0.75rem" }}>
@@ -388,25 +372,11 @@ const Header = () => {
               onClick={handleSave}
               sx={{ mr: 1 }}
             >
-              {translations["memSave"]}
+              Save
             </Button>
           </Box>
         </Container>
       </Modal>
-
-      <div className="cards-container">
-        {filteredData.length > 0 &&
-          filteredData.map((item) => (
-            <>
-              {console.log(item)}
-              <RecipeReviewCard
-                key={item.id}
-                searchQuery={searchQuery}
-                search={item}
-              />
-            </>
-          ))}
-      </div>
     </>
   );
 };

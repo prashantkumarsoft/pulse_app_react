@@ -1,0 +1,26 @@
+{
+    "navbar.title": "Pacientes",
+    "navbar.addMember": "Agregar Miembro",
+    "search.placeholder": "Buscar...",
+    "stage1.title": "Dirige",
+    "stage2.title": "Calificado",
+    "stage3.title": "Reservado",
+    "stage4.title": "tratado", 
+    "header.addOpportunity": "  Agregar oportunidad", 
+    "image.message": "   Haga clic para cargar imagen", 
+    "image.SuccMessage": " Subido con éxito",
+    "memFirstName": "Nombre de pila",
+    "memLastName": " Apellido",
+    "memGender": " Género",
+    "memSave": " Ahorrar",
+    "male": " Masculina",
+    "female": " Femenina",
+    "doctor": " Doctora",
+    "patient": " paciente"
+
+    
+
+  }
+
+  
+  

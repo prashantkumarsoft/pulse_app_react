@@ -1,5 +1,9 @@
 import * as React from "react";
 import Card from "@mui/material/Card";
+import enTranslations from '../json_files/en.json';
+import esTranslations from '../json_files/es.json';
+import { useLanguage } from '../../context/LanguageContext';
+
 import {
   Typography,
   Box,
@@ -12,6 +16,7 @@ import {
   IconButton,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import DeleteIcon from '@mui/icons-material/Delete';
 import { red } from "@mui/material/colors";
 import "./Card.css";
 import SkipNextIcon from "@mui/icons-material/SkipNext";
@@ -20,25 +25,27 @@ import moment from "moment";
 import { baseUrl } from "../../config";
 import axios from "axios";
 
+export default function RecipeReviewCard({data, search, searchQuery}) {
+
+  const { language } = useLanguage();
+  const translations = language === 'es' ? esTranslations : enTranslations;
 
 
-export default function RecipeReviewCard({data}) {
   const [openPopup, setOpenPopup] = React.useState(false);
   const [selectedDate, setSelectedDate] = React.useState('');
-  const [updateData, setUpdateData] = React.useState({})
+  const [updateData, setUpdateData] = React.useState({
+    
+      "procedure_name": "",
+      "doctor_id": 0,
+      "stage_history": [{"stage_name": "lead", "timestamp": new Date().toISOString()}]
+  
+  })
 
   const handleOpenPopup = (item) => {
     setOpenPopup(true);
     setUpdateData(item) 
   };
 
-  const [formData , setFormData] = React.useState(
-    {
-      "procedure_name": "",
-      "doctor_id": 0,
-      "stage_history": [{"stage_name": "lead", "timestamp": new Date().toISOString()}]
-  }
-  )
 
   const handleClosePopup = () => {
     setOpenPopup(false);
@@ -73,6 +80,19 @@ export default function RecipeReviewCard({data}) {
       });
     
   }
+
+  const handleDeleteButton = (item) => {
+  
+      axios
+        .delete(`${baseUrl}/opportunities/${item.id}`)
+        .then((response) => {
+
+        })
+        .catch((error) => {
+          console.error("error", error);
+        });
+    
+  };
 
   return (
     <>
@@ -150,6 +170,7 @@ export default function RecipeReviewCard({data}) {
               </Avatar>
               <SkipNextIcon onClick={()=> handleNextButton(item)} />
               <EditIcon  onClick={()=>handleOpenPopup(item)}/>
+              <DeleteIcon  onClick={() => handleDeleteButton(item)}>  <CloseIcon /></DeleteIcon>
             </Box>
           </Box>
         </Box>
